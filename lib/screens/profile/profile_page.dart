@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 
 import '../../utils/app_colors.dart';
 import '../home/widgets/bottom_navbar.dart';
+import 'widgets/logout_card.dart';
+import 'widgets/profile_avatar.dart';
+import 'widgets/profile_menu.dart';
+import 'widgets/profile_stats.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -18,137 +22,73 @@ class ProfilePage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
+        centerTitle: false,
         title: const Text(
-          "My Profile",
+          "User Profile",
           style: TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.bold,
           ),
         ),
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(
+              Icons.more_vert,
+              color: Colors.black,
+            ),
+          ),
+        ],
       ),
 
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            children: [
 
-        child: Column(
-          children: [
-
-            // FOTO PROFILE
-            Container(
-              width: 110,
-              height: 110,
-              decoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(.15),
-                shape: BoxShape.circle,
+              /// 1. Bagian Atas dipaksa ke Tengah (Center)
+              const Center(
+                child: ProfileAvatar(),
               ),
-              child: const Icon(
-                Icons.person,
-                size: 65,
-                color: AppColors.primary,
+
+              const SizedBox(height: 35),
+
+              /// 2. Bagian Statistik
+              const ProfileStats(),
+
+              const SizedBox(height: 35),
+
+              /// 3. Judul Kategori (Rata Kiri secara spesifik menggunakan Align)
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: EdgeInsets.only(left: 4, bottom: 12),
+                  child: Text(
+                    "PENGATURAN AKUN",
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF5C6070),
+                      letterSpacing: 0.8,
+                    ),
+                  ),
+                ),
               ),
-            ),
 
-            const SizedBox(height: 18),
+              /// 4. Menu Utama (Bubble Putih)
+              const ProfileMenu(),
 
-            const Text(
-              "Farah Mukti",
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+              const SizedBox(height: 25),
 
-            const SizedBox(height: 5),
+              /// 5. Tombol Keluar Akun
+              const LogoutCard(),
 
-            const Text(
-              "farah@email.com",
-              style: TextStyle(
-                color: Colors.grey,
-                fontSize: 15,
-              ),
-            ),
+              const SizedBox(height: 25),
 
-            const SizedBox(height: 35),
-
-            buildMenu(
-              Icons.favorite,
-              "Favorite Scholarship",
-              Colors.red,
-            ),
-
-            buildMenu(
-              Icons.notifications,
-              "Notifications",
-              Colors.orange,
-            ),
-
-            buildMenu(
-              Icons.settings,
-              "Settings",
-              Colors.blue,
-            ),
-
-            buildMenu(
-              Icons.help_outline,
-              "Help Center",
-              Colors.green,
-            ),
-
-            buildMenu(
-              Icons.info_outline,
-              "About BeaKita",
-              Colors.purple,
-            ),
-
-            buildMenu(
-              Icons.logout,
-              "Logout",
-              Colors.redAccent,
-            ),
-
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget buildMenu(
-      IconData icon,
-      String title,
-      Color color,
-      ) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 15),
-
-      elevation: 2,
-
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(18),
-      ),
-
-      child: ListTile(
-
-        leading: CircleAvatar(
-          backgroundColor: color.withOpacity(.15),
-          child: Icon(
-            icon,
-            color: color,
+            ],
           ),
         ),
-
-        title: Text(
-          title,
-          style: const TextStyle(
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-
-        trailing: const Icon(
-          Icons.arrow_forward_ios,
-          size: 17,
-        ),
-
-        onTap: () {},
       ),
     );
   }

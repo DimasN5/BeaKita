@@ -1,17 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-import 'theme/app_theme.dart';
 import 'screens/auth/login_page.dart';
-import 'providers/scholarship_provider.dart';
+import 'theme/app_theme.dart';
 
 void main() {
-  runApp(
-    ChangeNotifierProvider(
-      create: (_) => ScholarshipProvider(),
-      child: const BeaKitaApp(),
-    ),
-  );
+  runApp(const BeaKitaApp());
 }
 
 class BeaKitaApp extends StatelessWidget {
