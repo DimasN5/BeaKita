@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import '../../services/dummy_scholarship.dart';
+import '../../providers/scholarship_provider.dart';
 import '../../utils/app_colors.dart';
 import '../detail/detail_page.dart';
 import '../home/widgets/bottom_navbar.dart';
@@ -14,188 +15,96 @@ class FavoritePage extends StatefulWidget {
 
 class _FavoritePageState extends State<FavoritePage> {
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ScholarshipProvider>().fetchFavorites();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: false,
-        title: const Text(
-          "Favorite Scholarship",
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        backgroundColor: Colors.transparent, elevation: 0, centerTitle: false,
+        title: const Text("Favorite Scholarship", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
       ),
+      bottomNavigationBar: const BottomNavbar(selectedIndex: 2),
+      body: Consumer<ScholarshipProvider>(
+        builder: (context, provider, _) {
+          final favorites = provider.favorites;
 
-      bottomNavigationBar: const BottomNavbar(
-        selectedIndex: 2,
-      ),
-
-      body: favoriteScholarships.isEmpty
-          ? const Center(
+          if (favorites.isEmpty) {
+            return const Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-
-                  Icon(
-                    Icons.favorite_border,
-                    size: 70,
-                    color: Colors.grey,
-                  ),
-
+                  Icon(Icons.favorite_border, size: 70, color: Colors.grey),
                   SizedBox(height: 20),
-
-                  Text(
-                    "No Favorite Scholarship",
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-
+                  Text("No Favorite Scholarship", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
                   SizedBox(height: 8),
-
-                  Text(
-                    "Tap the ❤️ icon to save scholarships.",
-                    style: TextStyle(
-                      color: Colors.grey,
-                    ),
-                  ),
-
+                  Text("Tap the ❤️ icon to save scholarships.", style: TextStyle(color: Colors.grey)),
                 ],
               ),
-            )
-          : ListView.builder(
-              padding: const EdgeInsets.all(20),
-              itemCount: favoriteScholarships.length,
-              itemBuilder: (context, index) {
-                final item = favoriteScholarships[index];
+            );
+          }
 
-                return Container(
-                  margin: const EdgeInsets.only(bottom: 18),
-                  padding: const EdgeInsets.all(18),
-
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(.05),
-                        blurRadius: 15,
-                        offset: const Offset(0, 5),
+          return ListView.builder(
+            padding: const EdgeInsets.all(20),
+            itemCount: favorites.length,
+            itemBuilder: (context, index) {
+              final item = favorites[index];
+              return Container(
+                margin: const EdgeInsets.only(bottom: 18),
+                padding: const EdgeInsets.all(18),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [BoxShadow(color: Colors.black.withOpacity(.05), blurRadius: 15, offset: const Offset(0, 5))],
+                ),
+                child: Column(
+                  children: [
+                    ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: CircleAvatar(
+                        radius: 28,
+                        backgroundColor: AppColors.primary.withOpacity(.15),
+                        child: const Icon(Icons.school, color: AppColors.primary),
                       ),
-                    ],
-                  ),
-
-                  child: Column(
-                    children: [
-
-                      ListTile(
-
-                        contentPadding: EdgeInsets.zero,
-
-                        leading: CircleAvatar(
-                          radius: 28,
-                          backgroundColor:
-                              AppColors.primary.withOpacity(.15),
-                          child: const Icon(
-                            Icons.school,
-                            color: AppColors.primary,
-                          ),
-                        ),
-
-                        title: Text(
-                          item.title,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-
-                        subtitle: Column(
-                          crossAxisAlignment:
-                              CrossAxisAlignment.start,
-                          children: [
-
-                            const SizedBox(height: 5),
-
-                            Text(item.organization),
-
-                            const SizedBox(height: 5),
-
-                            Text(
-                              item.deadline,
-                              style: const TextStyle(
-                                color: Colors.orange,
-                              ),
-                            ),
-
-                          ],
-                        ),
-
-                        trailing: IconButton(
-
-                          icon: const Icon(
-                            Icons.favorite,
-                            color: Colors.red,
-                          ),
-
-                          onPressed: () {
-
-                            setState(() {
-
-                              item.toggleFavorite();
-
-                            });
-
-                          },
-
-                        ),
-
+                      title: Text(item.title, style: const TextStyle(fontWeight: FontWeight.bold)),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 5),
+                          Text(item.organization),
+                          const SizedBox(height: 5),
+                          Text(item.deadline, style: const TextStyle(color: Colors.orange)),
+                        ],
                       ),
-
-                      const SizedBox(height: 15),
-
-                      SizedBox(
-                        width: double.infinity,
-
-                        child: ElevatedButton(
-
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primary,
-                          ),
-
-                          onPressed: () {
-
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => DetailPage(
-                                  scholarship: item,
-                                ),
-                              ),
-                            );
-
-                          },
-
-                          child: const Text(
-                            "View Detail",
-                            style: TextStyle(
-                              color: Colors.white,
-                            ),
-                          ),
-
-                        ),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.favorite, color: Colors.red),
+                        onPressed: () async {
+                          await provider.toggleFavorite(item);
+                        },
                       ),
-
-                    ],
-                  ),
-                );
-              },
-            ),
+                    ),
+                    const SizedBox(height: 15),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
+                        onPressed: () { Navigator.push(context, MaterialPageRoute(builder: (_) => DetailPage(scholarship: item))); },
+                        child: const Text("View Detail", style: TextStyle(color: Colors.white)),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }
